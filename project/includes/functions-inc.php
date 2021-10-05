@@ -1,12 +1,5 @@
 <?php
 
-function emptyInputSignup($conn, $firstName, $lastName, $email, $password, $passwordConfirm){
-    $result = false;
-    if(empty($firstName) || empty($lastName) || empty($email) || empty($password) || empty($passwordConfirm)){
-       return true;
-    }
-    return false;
-}
 
 function invalidEmail($email){
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -16,12 +9,6 @@ function invalidEmail($email){
 
 }
 
-function invalidCell($cell_num){
-    if(!preg_match('/^[0-9]{10}+$/', $cell_num)){
-        return true;
-    }
-    return false;
-}
 
 function passwordMatch($password, $passwordConfirm){
     if($password !== $passwordConfirm){
@@ -55,9 +42,9 @@ function emailExists($conn, $email){
 
 
 
-function createUser($conn, $firstName, $lastName, $email, $password, $status, $cell_num){
+function createUser($conn, $firstName, $lastName, $email, $password, $status, $vkey, $verify){
     
-    $sql = "INSERT INTO users (first_name, last_name, email, password, status, cell_num) VALUES (?, ?, ?, ?, ?, ?);";    
+    $sql = "INSERT INTO users (first_name, last_name, email, password, status, vkey, verify) VALUES (?, ?, ?, ?, ?, ?, ?);";    
     $stmt = mysqli_stmt_init($conn); //initialize a prepared statment, prevents code injection
     if(!mysqli_stmt_prepare($stmt, $sql)) {
         header("location: ../index.php?error=stmtfailedinsert");
@@ -66,7 +53,7 @@ function createUser($conn, $firstName, $lastName, $email, $password, $status, $c
     
     $hashedPwd = password_hash($password, PASSWORD_DEFAULT);
 
-    mysqli_stmt_bind_param($stmt, "ssssss", $firstName, $lastName, $email, $hashedPwd, $status, $cell_num); //1 s for 1 string being passed
+    mysqli_stmt_bind_param($stmt, "sssssss", $firstName, $lastName, $email, $hashedPwd, $status, $vkey, $verify); //1 s for 1 string being passed
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     header("location: ../register.php?error=none");
@@ -110,6 +97,8 @@ function loginUser($conn, $email, $password){
             $_SESSION["last_name"] = $uidExists["last_name"];
             $_SESSION["email"] = $uidExists["email"];
             $_SESSION["cell_num"] = $uidExists["cell_num"];
+            $_SESSION["vkey"] = $uidExists["vkey"];
+            $_SESSION["verify"] = $uidExists["verify"];
             
             
             if($_SESSION["first_name"] == 'admin'){
