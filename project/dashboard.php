@@ -14,8 +14,6 @@
                     echo "<input class='registration' type='text' id='lastName' name='lastName' placeholder=". $_SESSION["last_name"] .">";
                     echo "<label for='email'>email</label>";
                     echo "<input class='registration' type='email' id='email' name='email' autocomplete='new-password' placeholder=". $_SESSION['email'] .">";
-                    echo "<label for='cell_num'>mobile number</label>";
-                    echo "<input class='registration' type='tel' id='cell_num' name='cell_num' placeholder=". $_SESSION['cell_num'] .">";
                     echo "<button id='updateINFO' type='submit' class='submitBtn' name='updateINFO'>update my info</button>";
                     echo "<div class='dash-divider''></div>";
                     echo "<label for='password'>password</label>";

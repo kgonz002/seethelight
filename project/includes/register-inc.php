@@ -13,17 +13,9 @@ if(isset($_POST["submit"])) {
     require_once 'config.php';
     require_once 'functions-inc.php';
 
-    if(emptyInputSignup($conn, $firstName, $lastName, $email, $cell_num, $password, $passwordConfirm) !== false) {
-        header("location: ../register.php?error=emptyinput");
-        exit();
-    }
 
     if(invalidEmail($email) !== false) {
         header("location: ../register.php?error=invalidemail");
-        exit();
-    }
-    if(invalidCell($cell_num) !== false){
-        header("location: ../register.php?error=invalidcell");
         exit();
     }
 
