@@ -1,6 +1,6 @@
 <?php 
     include_once 'header.php';
-   
+
 ?>
 
 <div class="container">
@@ -25,7 +25,10 @@
                     }
                     if($_GET["error"] == "usernotapproved"){
                         echo "<p class='errorMessage'>* Your registration approval is still pending.</p>";
-                    } 
+                    }
+                    if($_GET["error"] == "emailnotverified"){
+                        echo "<p class='errorMessage'>* Your email address has not been verified.</p>";
+                    }  
                 }
             ?>        
             <button id="submitLogin" type="submitLogin" class="submitBtn" name="submitLogin">SUBMIT</button>
@@ -33,6 +36,7 @@
         </form> 
     </div>          
 </div>
+
 
 <?php 
     include_once 'footer.php';

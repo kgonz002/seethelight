@@ -29,7 +29,7 @@
                         echo "<p class='errorMessage'>* Email is already registered</p>";
                     }
                     if($_GET["error"] == "none"){
-                        echo "<p class='success'>Registration successful, an administrator will complete your request shortly.</p>";
+                        echo "<p class='success'>Registration successful, an administrator will complete your request shortly. Check your inbox for a link to verify your email address.</p>";
                     }     
                                             
                 }

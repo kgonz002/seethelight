@@ -42,9 +42,9 @@ function emailExists($conn, $email){
 
 
 
-function createUser($conn, $firstName, $lastName, $email, $password, $status, $vkey, $verify){
+function createUser($conn, $firstName, $lastName, $email, $password, $status, $vkey, $verified){
     
-    $sql = "INSERT INTO users (first_name, last_name, email, password, status, vkey, verify) VALUES (?, ?, ?, ?, ?, ?, ?);";    
+    $sql = "INSERT INTO users (first_name, last_name, email, password, status, vkey, verified) VALUES (?, ?, ?, ?, ?, ?, ?);";    
     $stmt = mysqli_stmt_init($conn); //initialize a prepared statment, prevents code injection
     if(!mysqli_stmt_prepare($stmt, $sql)) {
         header("location: ../index.php?error=stmtfailedinsert");
@@ -53,12 +53,31 @@ function createUser($conn, $firstName, $lastName, $email, $password, $status, $v
     
     $hashedPwd = password_hash($password, PASSWORD_DEFAULT);
 
-    mysqli_stmt_bind_param($stmt, "sssssss", $firstName, $lastName, $email, $hashedPwd, $status, $vkey, $verify); //1 s for 1 string being passed
+    mysqli_stmt_bind_param($stmt, "sssssss", $firstName, $lastName, $email, $hashedPwd, $status, $vkey, $verified); //1 s for 1 string being passed
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
+
+    if($stmt){       
+
+        $to = $email;
+        $subject = "See the Light - Email Verification";
+        $message = "<a href='http://localhost/cs518/seethelight/project/includes/verify-email-inc.php?vkey=$vkey'>Verify Email Address</a>";
+
+        // It is mandatory to set the content-type when sending HTML email
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+
+        // More headers. From is required, rest other headers are optional
+        $headers .= 'From: <kimberlyreneegonzales@gmail.com>' . "\r\n";
+        
+
+        mail($to,$subject,$message,$headers);
+
+        
+    }
+
     header("location: ../register.php?error=none");
-    exit();   
-    
+    exit();       
 }
 
 
@@ -82,7 +101,16 @@ function loginUser($conn, $email, $password){
     exit();
    }
 
-   if($uidExists['status'] === 'approved'){   
+   
+   if($uidExists['verified'] === '0') {
+    header("location: ../login.php?error=emailnotverified");
+    exit();  
+   }
+   elseif($uidExists['status'] === 'pending') {
+    header("location: ../login.php?error=usernotapproved");
+    exit();  
+   }   
+   else {   
         $pwdHashed = $uidExists["password"];
         $checkPwd = password_verify($password, $pwdHashed);
      
@@ -98,7 +126,7 @@ function loginUser($conn, $email, $password){
             $_SESSION["email"] = $uidExists["email"];
             $_SESSION["cell_num"] = $uidExists["cell_num"];
             $_SESSION["vkey"] = $uidExists["vkey"];
-            $_SESSION["verify"] = $uidExists["verify"];
+            $_SESSION["verified"] = $uidExists["verified"];
             
             
             if($_SESSION["first_name"] == 'admin'){
@@ -113,10 +141,7 @@ function loginUser($conn, $email, $password){
             }    
         }
     }
-    else{        
-        header("location: ../login.php?error=usernotapproved");
-        exit();        
-    }
+   
 }
 
 
@@ -160,6 +185,27 @@ function authenticateLogin($g, $qrcode, $secret){
         header("location: ../authenticate.php?error=wrongcode");
         exit();
     }
+}
+
+function verifyEmail($conn, $vkey){
+
+    $verified = 1;
+
+    $sql = "UPDATE users SET verified = ? WHERE vkey = ?;";    
+    $stmt = mysqli_stmt_init($conn); //initialize a prepared statment, prevents code injection
+
+    if(!mysqli_stmt_prepare($stmt, $sql)) {
+        header("location: ../index.php?error=stmtfailedinsert");
+        exit();
+    }
+    
+
+    mysqli_stmt_bind_param($stmt, "ss", $verified, $vkey); //1 s for 1 string being passed
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    header("location: ../verify-email.php?error=none");
+    exit();   
+
 }
  
 

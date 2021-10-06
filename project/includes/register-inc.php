@@ -8,8 +8,8 @@ if(isset($_POST["submit"])) {
     $password = $_POST["password"];
     $passwordConfirm = $_POST["passwordConfirm"];
     $status = "pending";
-    // $vkey = ;
-    $verify = 0;
+    $vkey = md5(time().$email);
+    $verified = 0;
     
     require_once 'config.php';
     require_once 'functions-inc.php';
@@ -30,7 +30,7 @@ if(isset($_POST["submit"])) {
         exit();
     }
 
-    createUser($conn, $firstName, $lastName, $email, $password, $status, $vkey, $verify);
+    createUser($conn, $firstName, $lastName, $email, $password, $status, $vkey, $verified);
 }
 else {
     header("location: ../index.php?error=stuffhappened");
