@@ -32,7 +32,7 @@
                 }
             ?>        
             <button id="submitLogin" type="submitLogin" class="submitBtn" name="submitLogin">SUBMIT</button>
-            <a href="#" style="display: block;">Forgot your password?</a>
+            <a href="forgot-password.php" style="display: block;">Forgot your password?</a>
         </form> 
     </div>          
 </div>

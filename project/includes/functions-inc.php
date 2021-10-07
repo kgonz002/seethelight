@@ -145,7 +145,7 @@ function loginUser($conn, $email, $password){
 }
 
 
-
+//update password from user dashboard
 function updatePassword($conn, $password, $id){
     $sql = "UPDATE users SET password = ? WHERE id = ?;";    
     $stmt = mysqli_stmt_init($conn); //initialize a prepared statment, prevents code injection
@@ -161,6 +161,28 @@ function updatePassword($conn, $password, $id){
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     header("location: ../dashboard.php?error=none");
+    exit();   
+
+
+}
+
+
+//reset password after receiving email (forgotten)
+function forgotPassword($conn, $password, $email){
+    $sql = "UPDATE users SET password = ? WHERE email = ?;";    
+    $stmt = mysqli_stmt_init($conn); //initialize a prepared statment, prevents code injection
+
+    if(!mysqli_stmt_prepare($stmt, $sql)) {
+        header("location: ../index.php?error=stmtfailedinsert");
+        exit();
+    }
+    
+    $hashedPwd = password_hash($password, PASSWORD_DEFAULT);
+
+    mysqli_stmt_bind_param($stmt, "ss", $hashedPwd, $email); //1 s for 1 string being passed
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    header("location: ../reset-password.php?error=none");
     exit();   
 
 
@@ -187,6 +209,8 @@ function authenticateLogin($g, $qrcode, $secret){
     }
 }
 
+
+
 function verifyEmail($conn, $vkey){
 
     $verified = 1;
@@ -206,6 +230,38 @@ function verifyEmail($conn, $vkey){
     header("location: ../verify-email.php?error=none");
     exit();   
 
+}
+
+
+
+function emailResetPassword($conn, $email){
+
+    $uidExists = emailExists($conn, $email);      
+    
+    if (!$uidExists){
+        header("location: ../forgot-password.php?error=emailnotregistered");
+        exit();
+       }
+    
+   else {   
+
+        $to = $email;
+        $subject = "See the Light - Password Reset";
+        $message = "<a href='http://localhost/cs518/seethelight/project/reset-password.php?email=$email'>Password Reset Link</a>";
+
+        // It is mandatory to set the content-type when sending HTML email
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+
+        // More headers. From is required, rest other headers are optional
+        $headers .= 'From: <kimberlyreneegonzales@gmail.com>' . "\r\n";
+        
+
+        mail($to,$subject,$message,$headers);        
+    }
+   
+    header("location: ../forgot-password.php?error=none");
+    exit();
 }
  
 
