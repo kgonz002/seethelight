@@ -4,7 +4,7 @@
 
 
 <div class='centered'>   
-    <div class='element'style='box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19); border-radius: 5%;'>       
+    <div class='element'style='box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19); border-radius: 5%;'>  
         <form action='includes/dashboard-inc.php' method='post'>
             <div class='registration'>
                 <?php
@@ -13,9 +13,18 @@
                     echo "<label for='lastName'>last name</label>";
                     echo "<input class='registration' type='text' id='lastName' name='lastName' placeholder=". $_SESSION["last_name"] .">";
                     echo "<label for='email'>email</label>";
-                    echo "<input class='registration' type='email' id='email' name='email' autocomplete='new-password' placeholder=". $_SESSION['email'] .">";
-                    echo "<button id='updateINFO' type='submit' class='submitBtn' name='updateINFO'>update my info</button>";
+                    echo "<input class='registration' style='background-color: #E5E4E2;' type='email' id='email' name='email' readonly='readonly'  placeholder=". $_SESSION['email'] .">";
+                    echo "<button id='updateinfo' type='submit' class='submitBtn' name='updateINFO'>update my info</button>";                    
+                    if($_GET["error"] == "none?infoset"){
+                        echo "<p class='success'>Information successfuly updated.</p>";
+                    }                   
                     echo "<div class='dash-divider''></div>";
+                ?>
+            </div>
+        </form>          
+        <form action='includes/dashboard-inc.php' method='post'>
+            <div class='registration'>
+                <?php                   
                     echo "<label for='password'>password</label>";
                     echo "<input class='registration' type='password' id='password' name='password' autocomplete='new-password' required/>";
                     echo "<label for='passwordConfirm'>re-enter password</label>";

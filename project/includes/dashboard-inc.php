@@ -18,7 +18,20 @@ if(isset($_POST["updatePW"])){
 
     updatePassword($conn, $password, $id);
 }
+
+elseif(isset($_POST["updateINFO"])){
+    session_start(); 
+
+    require_once 'config.php';
+    require_once 'functions-inc.php'; 
+    $first_name = $_POST['firstName'];
+    $last_name = $_POST['lastName'];   
+    $id = $_SESSION['id'];    
+      
+    updateName($conn, $first_name, $last_name, $id);  
+
+}
 else {
-    header("location: ../login.php");
+    header("location: ../dashboard.php?error=notset");
     exit();
 }

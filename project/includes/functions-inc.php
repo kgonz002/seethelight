@@ -167,6 +167,43 @@ function updatePassword($conn, $password, $id){
 }
 
 
+//update user name from dashboard
+function updateName($conn, $first_name, $last_name, $id){
+
+    if(!($last_name === "")){
+        $sql = "UPDATE users SET last_name = ? WHERE id = ?;";    
+        $stmt = mysqli_stmt_init($conn); //initialize a prepared statment, prevents code injection
+    
+        if(!mysqli_stmt_prepare($stmt, $sql)) {
+            header("location: ../index.php?error=stmtfailedinsert");
+            exit();
+        }        
+    
+        mysqli_stmt_bind_param($stmt, "ss", $last_name, $id); //1 s for 1 string being passed
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+
+    if(!($first_name === "")){
+        $sql = "UPDATE users SET first_name = ? WHERE id = ?;";    
+        $stmt = mysqli_stmt_init($conn); //initialize a prepared statment, prevents code injection
+    
+        if(!mysqli_stmt_prepare($stmt, $sql)) {
+            header("location: ../index.php?error=stmtfailedinsert");
+            exit();
+        }        
+    
+        mysqli_stmt_bind_param($stmt, "ss", $first_name, $id); //1 s for 1 string being passed
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+   
+    header("location: ../dashboard.php?error=none?infoset");
+    exit();   
+}
+
+
+
 //reset password after receiving email (forgotten)
 function forgotPassword($conn, $password, $email){
     $sql = "UPDATE users SET password = ? WHERE email = ?;";    
